@@ -1,0 +1,5 @@
+sample  group   treatment       index   index sequence
+1       2A      control B1      GTAGCGTA
+2       2B      control A5      CGATCGAT
+3       2B      control C1      GATCAAGG
+11      2H      both    A11     CTAGCTCA
