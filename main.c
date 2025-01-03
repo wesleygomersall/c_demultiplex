@@ -15,6 +15,7 @@ int count_lines(char file_name[]);
 char *rev_complement(char *seq);
 float phred33ave(char *c);
 char *rem_trailing_space(char *string);
+char *rem_newline(char *string);
 
 int main(int argc, char *argv[])
 {
@@ -174,7 +175,24 @@ int main(int argc, char *argv[])
 		
 		strcat(bcpair, "_");
 		strcat(bcpair, r3seq);
-		printf("%s %s\n",r1name, bcpair);
+
+		// remove newline char from r1name and r4name
+		rem_newline(r1name);
+		rem_newline(r4name);
+
+		
+		// add the barcode labels to the fastq seq names
+		strcat(r1name, " ");
+		strcat(r4name, " ");
+		strcat(r1name, bcpair);
+		strcat(r4name, bcpair);
+
+		// add a newline char back to these names
+		strcat(r1name, "\n");
+		strcat(r4name, "\n");
+
+		printf("%s", r1name);
+		printf("%s", r4name);
 
 		if (matched != 0) {
 			// this is a variable filename 
@@ -321,5 +339,14 @@ char *rem_trailing_space(char *string) {
 			break;
 		}
 	}
+	return string;
+}
+
+char *rem_newline(char *string) {
+	/* do not pass this function empty array 
+	 * or array which consists of only spaces */
+
+	string[strcspn(string, "\n")] = 0;
+
 	return string;
 }
