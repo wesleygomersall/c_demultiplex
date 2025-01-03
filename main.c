@@ -193,9 +193,6 @@ int main(int argc, char *argv[])
 		strcat(r1name, "\n");
 		strcat(r4name, "\n");
 
-		printf("%s", r1name);
-		printf("%s", r4name);
-
 		if (matched != 0) {
 			// this is a variable filename 
     			snprintf(filenameR1, sizeof(filenameR1), "output/%s_R1.fq", barcodearray[j]);
