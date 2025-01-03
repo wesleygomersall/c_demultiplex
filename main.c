@@ -8,9 +8,11 @@
 #define SEQUENCE_LEN 500
 #define BARCODE_LEN 10 
 #define PLUS_LEN 200
+#define QUAL_CUTOFF 30
 
 int count_lines(char file_name[]);
 char *rev_complement(char *seq);
+float phred33ave(char *c);
 
 int main(int argc, char *argv[])
 {
@@ -120,16 +122,19 @@ int main(int argc, char *argv[])
 		fgets(r4plus, sizeof(r4plus), read4);
 		fgets(r4qual, sizeof(r4qual), read4);
 		
-		/* WIP: add quality filtering for the barcodes */
+		/* quality filtering for the barcodes */
+		if (phred33ave(r2qual) < QUAL_CUTOFF || phred33ave(r3qual) < QUAL_CUTOFF) unk++;
 		
-		for (j = 0; j < num_barcodes; j++) { // check each barcode in list against the r2 barcode
-			if(strncmp(barcodearray[j], r2seq, 8) == 0) { // if r2seq is a valid barcode
-				if (strncmp(rc_barcodearray[j], r3seq, 8) == 0) { // if r3seq is matching (revcomp) 
-					matched++; // matched == 1 
+		if (unk == 0) {
+			for (j = 0; j < num_barcodes; j++) { // check each barcode in list against the r2 barcode
+				if(strncmp(barcodearray[j], r2seq, 8) == 0) { // if r2seq is a valid barcode
+					if (strncmp(rc_barcodearray[j], r3seq, 8) == 0) { // if r3seq is matching (revcomp) 
+						matched++; // matched == 1 
+					}
+					break;
 				}
-				break;
+				else if (j == num_barcodes - 1) unk++;
 			}
-			else if (j == num_barcodes - 1) unk++;
 		}
 
 		if (matched == 0 && unk == 0) { // check the second barcode (r3) if necessary 
@@ -277,4 +282,14 @@ char complement_base(char base)
 		default:
 			return '\0';
 	}
+}
+
+float phred33ave(char *c) {
+	int i, sum = 0, length = strlen(c);
+	for (i = 0; i < length; i++) {
+		if (c[i] == ' ') return 0;
+		int phred = (int) c[i] - 33;
+		sum += phred;
+	}
+	return sum / length;
 }
