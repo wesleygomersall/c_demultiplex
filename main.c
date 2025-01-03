@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #define HEADER_LEN 300
 #define SEQUENCE_LEN 500
@@ -13,6 +14,7 @@
 int count_lines(char file_name[]);
 char *rev_complement(char *seq);
 float phred33ave(char *c);
+char *rem_trailing_space(char *string);
 
 int main(int argc, char *argv[])
 {
@@ -168,10 +170,11 @@ int main(int argc, char *argv[])
 		strcpy(bcpair, r2seq);
 
 		// remove trailing whitespace from bcpair
+		rem_trailing_space(bcpair);
 		
 		strcat(bcpair, "_");
 		strcat(bcpair, r3seq);
-		printf("%s\n", bcpair);
+		printf("%s %s\n",r1name, bcpair);
 
 		if (matched != 0) {
 			// this is a variable filename 
@@ -249,25 +252,22 @@ int count_lines(char file_name[])
 	return line_num;
 }
 
-char *rev_complement(char *sequence)
-{
-		char complement_base(char base);
+char *rev_complement(char *sequence) {
+	char complement_base(char base);
 
-    if (!sequence || ! *sequence)
-        return sequence;
+    	if (!sequence || ! *sequence) return sequence;
 
-    int i = strlen(sequence) - 1, j = 0;
+    	int i = strlen(sequence) - 1, j = 0;
 
-    char temp;
-    while (i > j)
-    {
-        temp = complement_base(sequence[i]);
-        sequence[i] = complement_base(sequence[j]);
-        sequence[j] = temp;
-        i--;
-        j++;
-    }
-    return sequence;
+    	char temp;
+    	while (i > j) {
+        	temp = complement_base(sequence[i]);
+        	sequence[i] = complement_base(sequence[j]);
+        	sequence[j] = temp;
+        	i--;
+        	j++;
+    	}
+    	return sequence;
 }
 
 char complement_base(char base)
@@ -309,4 +309,17 @@ float phred33ave(char *c) {
 		sum += phred;
 	}
 	return sum / length;
+}
+
+char *rem_trailing_space(char *string) {
+	/* do not pass this function empty array 
+	 * or array which consists of only spaces */
+	int i;
+	for (i = 0; i < strlen(string); i++) {
+		if (isspace(string[i])) {
+			string[i] = '\0';
+			break;
+		}
+	}
+	return string;
 }
