@@ -9,7 +9,6 @@
 #define SEQUENCE_LEN 500
 #define BARCODE_LEN 10 
 #define PLUS_LEN 200
-#define QUAL_CUTOFF 30
 
 int count_lines(char file_name[]);
 char *rev_complement(char *seq);
@@ -19,11 +18,12 @@ char *rem_newline(char *string);
 
 int main(int argc, char *argv[])
 {
-	/* argv [1] = R1
-	   argv [2] = R2
-	   argv [3] = R3
-	   argv [4] = R4
-	   argv [5] = list of barcodes */ 
+	/* argv[1] == R1
+	   argv[2] == R2
+	   argv[3] == R3
+	   argv[4] == R4
+	   argv[5] == list of barcodes 
+	   argv[6] == user-defined cutoff */ 
 
 	/* use count_lines divided by 4 to get entry count. */
 	int num_reads = count_lines(argv[1]) / 4;
@@ -37,6 +37,8 @@ int main(int argc, char *argv[])
 	char rc_barcodearray[num_barcodes+1][100];
 	char *temp;
 	int i, j, k;
+
+	long cutoff = strtol(argv[6], NULL, 10);
 
 	fgets(barcodearray[0], sizeof(barcodearray[i]), barcodelist); // first line is overwritten  
 	for (i = 0; i < num_barcodes; i++) {
@@ -126,7 +128,7 @@ int main(int argc, char *argv[])
 		fgets(r4qual, sizeof(r4qual), read4);
 
 		/* quality filtering for the barcodes */
-		if (phred33ave(r2qual) < QUAL_CUTOFF || phred33ave(r3qual) < QUAL_CUTOFF) unk++;
+		if (phred33ave(r2qual) < cutoff || phred33ave(r3qual) < cutoff) unk++;
 		
 		if (unk == 0) {
 			for (j = 0; j < num_barcodes; j++) { // check each barcode in list against the r2 barcode
