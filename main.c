@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 		fgets(r4seq, sizeof(r4seq), read4);
 		fgets(r4plus, sizeof(r4plus), read4);
 		fgets(r4qual, sizeof(r4qual), read4);
-		
+
 		/* quality filtering for the barcodes */
 		if (phred33ave(r2qual) < QUAL_CUTOFF || phred33ave(r3qual) < QUAL_CUTOFF) unk++;
 		
@@ -156,12 +156,29 @@ int main(int argc, char *argv[])
 			break;
 		}
 
+		/* add the barcodes to the sequence names before writing */
+		// WIP
+		char bcpair[2*BARCODE_LEN+1];
+
+		r2seq[strlen(r2seq) - 1] = '\0'; // remove '\n' from fgets
+		r3seq[strlen(r3seq) - 1] = '\0';
+
+		rev_complement(r3seq);
+
+		strcpy(bcpair, r2seq);
+
+		// remove trailing whitespace from bcpair
+		
+		strcat(bcpair, "_");
+		strcat(bcpair, r3seq);
+		printf("%s\n", bcpair);
+
 		if (matched != 0) {
 			// this is a variable filename 
-    	snprintf(filenameR1, sizeof(filenameR1), "output/%s_R1.fq", barcodearray[j]);
-    	snprintf(filenameR2, sizeof(filenameR2), "output/%s_R2.fq", barcodearray[j]);
-    	foutR1 = fopen(filenameR1, "a");
-    	foutR2 = fopen(filenameR2, "a");
+    			snprintf(filenameR1, sizeof(filenameR1), "output/%s_R1.fq", barcodearray[j]);
+    			snprintf(filenameR2, sizeof(filenameR2), "output/%s_R2.fq", barcodearray[j]);
+    			foutR1 = fopen(filenameR1, "a");
+    			foutR2 = fopen(filenameR2, "a");
 
 			/* write to these files here */
 			fprintf(foutR1, r1name);
