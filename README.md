@@ -1,5 +1,6 @@
 # c_demultiplex
-Program for demultiplexing barcoded illumina data -written in C
+
+C program for demultiplexing dual-indexed illumina data 
 
 ## Use: 
 
@@ -9,4 +10,4 @@ Program for demultiplexing barcoded illumina data -written in C
 
 User-specified quality cutoff for the barcodes should be an integer value.
 
-Must use command `mkdir -p output` prior to running this program, 
+Must use command `mkdir -p output` prior to running this program. 
